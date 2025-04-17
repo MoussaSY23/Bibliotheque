@@ -47,8 +47,9 @@ pipeline {
 
         stage('Construire image Docker') {
             steps {
-                // Ajout du chemin vers Docker pour éviter l'erreur "docker: not found"
+                // Ajouter l'utilisateur Jenkins au groupe Docker pour lui donner accès au socket
                 sh '''
+                    usermod -aG docker jenkins
                     export PATH=$PATH:/usr/bin
                     docker --version
                     docker build -t MoussaSY23/librairie:latest .
