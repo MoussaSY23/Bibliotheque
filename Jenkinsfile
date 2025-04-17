@@ -9,7 +9,7 @@ pipeline {
         stage('Cloner depuis GitHub') {
             steps {
                 git(
-                    url: 'https://github.com/MoussaSY23/Sy_Moussa_librairie.git',
+                    url: 'https://github.com/MoussaSY23/librairie.git',
                     credentialsId: 'github-token', // ← le même ID que tout à l'heure
                     branch: 'Sy_Moussa_librairie'
                 )
