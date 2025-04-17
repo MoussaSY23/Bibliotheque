@@ -7,6 +7,7 @@ pipeline {
 
     environment {
         APP_ENV = 'local'
+        COMPOSER_HOME = '/var/jenkins_home/.composer'  // Définir un répertoire Composer spécifique
     }
 
     stages {
@@ -31,7 +32,7 @@ pipeline {
 
         stage('Installer les dépendances Laravel') {
             steps {
-                sh 'composer install'
+                sh 'composer install --no-interaction --prefer-dist --optimize-autoloader'
                 sh 'cp .env.example .env'
                 sh 'php artisan key:generate'
             }

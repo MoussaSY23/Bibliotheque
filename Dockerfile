@@ -13,9 +13,10 @@ RUN apt-get update && apt-get install -y \
     curl \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Installer Composer
+# Installer Composer depuis le conteneur officiel Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
+# Définir un répertoire de travail où l'application sera installée
 WORKDIR /var/www
 
 # Copier les fichiers du projet Laravel
