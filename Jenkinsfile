@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'composer:2.6' // Utilise une image Docker avec PHP + Composer préinstallé
+            image 'php:8.2-cli'
         }
     }
 
@@ -10,6 +10,15 @@ pipeline {
     }
 
     stages {
+        stage('Installer Composer') {
+            steps {
+                sh 'php -r "copy(\'https://getcomposer.org/installer\', \'composer-setup.php\');"'
+                sh 'php composer-setup.php'
+                sh 'mv composer.phar /usr/local/bin/composer'
+                sh 'composer --version'
+            }
+        }
+
         stage('Cloner depuis GitHub') {
             steps {
                 git(
@@ -22,17 +31,15 @@ pipeline {
 
         stage('Installer les dépendances Laravel') {
             steps {
-                sh '''
-                    composer install
-                    cp .env.example .env
-                    php artisan key:generate
-                '''
+                sh 'composer install'
+                sh 'cp .env.example .env'
+                sh 'php artisan key:generate'
             }
         }
 
         stage('Construire image Docker') {
             steps {
-                sh 'docker build -t moussasy23/librairie:latest .'
+                sh 'docker build -t MoussaSY23/librairie:latest .'
             }
         }
     }
