@@ -3,8 +3,8 @@ pipeline {
         dockerfile {
             filename 'Dockerfile'
             dir '.'
-            // Ajouter volume pour Docker Socket et donner accès à l'exécutable Docker
-            args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker'
+            // Monte le socket Docker de l'hôte pour que Jenkins puisse accéder à Docker
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
 
@@ -47,10 +47,8 @@ pipeline {
 
         stage('Construire image Docker') {
             steps {
-                // Ajouter l'utilisateur Jenkins au groupe Docker pour lui donner accès au socket
+                // Construire l'image Docker avec Docker de l'hôte
                 sh '''
-                    usermod -aG docker jenkins
-                    export PATH=$PATH:/usr/bin
                     docker --version
                     docker build -t MoussaSY23/librairie:latest .
                 '''
