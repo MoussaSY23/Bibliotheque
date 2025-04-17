@@ -3,8 +3,8 @@ pipeline {
         dockerfile {
             filename 'Dockerfile'
             dir '.'
-            // Ajouter volume pour Docker Socket
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
+            // Ajouter volume pour Docker Socket et donner accès à l'exécutable Docker
+            args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker'
         }
     }
 
