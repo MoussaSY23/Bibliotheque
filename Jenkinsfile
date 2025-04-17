@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'composer:2.6' // Utilise une image Docker avec PHP + Composer préinstallé
+        }
+    }
 
     environment {
         APP_ENV = 'local'
@@ -10,24 +14,25 @@ pipeline {
             steps {
                 git(
                     url: 'https://github.com/MoussaSY23/librairie.git',
-                    credentialsId: 'github-token', // ← le même ID que tout à l'heure
+                    credentialsId: 'github-token',
                     branch: 'Sy_Moussa_librairie'
                 )
             }
         }
 
-
         stage('Installer les dépendances Laravel') {
             steps {
-                sh 'composer install'
-                sh 'cp .env.example .env'
-                sh 'php artisan key:generate'
+                sh '''
+                    composer install
+                    cp .env.example .env
+                    php artisan key:generate
+                '''
             }
         }
 
         stage('Construire image Docker') {
             steps {
-                sh 'docker build -t MoussaSY23/librairie:latest .'
+                sh 'docker build -t moussasy23/librairie:latest .'
             }
         }
     }

@@ -1,6 +1,6 @@
 FROM php:8.2-fpm
 
-# Installer les extensions PHP nécessaires
+# Installer les dépendances système et extensions PHP requises
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpng-dev \
@@ -14,14 +14,20 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 # Installer Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
+# Copier les fichiers du projet Laravel
 COPY . .
 
-RUN composer install
+# Installer les dépendances Laravel
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader \
+    && cp .env.example .env \
+    && php artisan key:generate
 
-CMD php artisan serve --host=0.0.0.0 --port=8000
-
+# Exposer le port utilisé par Laravel (serveur intégré)
 EXPOSE 8000
+
+# Lancer Laravel
+CMD php artisan serve --host=0.0.0.0 --port=8000
