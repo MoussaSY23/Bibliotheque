@@ -8,9 +8,14 @@ pipeline {
     stages {
         stage('Cloner depuis GitHub') {
             steps {
-                git branch: 'Sy_Moussa_librairie', url: 'https://github.com/MoussaSY23/Sy_Moussa_librairie.git'
+                git(
+                    url: 'https://github.com/MoussaSY23/Sy_Moussa_librairie.git',
+                    credentialsId: 'github-token', // ← le même ID que tout à l'heure
+                    branch: 'Sy_Moussa_librairie'
+                )
             }
         }
+
 
         stage('Installer les dépendances Laravel') {
             steps {
