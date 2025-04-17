@@ -11,14 +11,15 @@ pipeline {
     }
 
     stages {
-        stage('Installer Composer') {
-            steps {
-                sh 'php -r "copy(\'https://getcomposer.org/installer\', \'composer-setup.php\');"'
-                sh 'php composer-setup.php'
-                sh 'mv composer.phar /usr/local/bin/composer'
-                sh 'composer --version'
-            }
-        }
+       stage('Installer Composer') {
+           steps {
+               sh 'php -r "copy(\'https://getcomposer.org/installer\', \'composer-setup.php\');"'
+               sh 'php composer-setup.php'
+               sh 'mv composer.phar /var/jenkins_home/composer.phar'  // Déplacer Composer dans un répertoire accessible
+               sh 'php /var/jenkins_home/composer.phar --version'
+           }
+       }
+
 
         stage('Cloner depuis GitHub') {
             steps {
