@@ -1,23 +1,25 @@
 pipeline {
     agent {
-        docker {
-            image 'php:8.2-cli'
+        dockerfile {
+            filename 'Dockerfile'
+            dir '.'
         }
     }
 
     environment {
         APP_ENV = 'local'
-        COMPOSER_HOME = '/var/jenkins_home/.composer' // Répertoire de cache de Composer
-        COMPOSER_PATH = '/var/jenkins_home/composer.phar' // Emplacement du fichier Composer
+        COMPOSER_HOME = '/var/jenkins_home/.composer'
     }
 
     stages {
         stage('Installer Composer') {
             steps {
-                sh 'php -r "copy(\'https://getcomposer.org/installer\', \'composer-setup.php\');"'
-                sh 'php composer-setup.php'
-                sh 'mv composer.phar $COMPOSER_PATH'
-                sh 'php $COMPOSER_PATH --version'
+                sh '''
+                    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+                    php composer-setup.php
+                    mv composer.phar /var/jenkins_home/composer.phar
+                    php /var/jenkins_home/composer.phar --version
+                '''
             }
         }
 
@@ -33,15 +35,17 @@ pipeline {
 
         stage('Installer les dépendances Laravel') {
             steps {
-                sh 'php $COMPOSER_PATH install --no-interaction --prefer-dist --optimize-autoloader'
-                sh 'cp .env.example .env'
-                sh 'php artisan key:generate'
+                sh '''
+                    php /var/jenkins_home/composer.phar install --no-interaction --prefer-dist --optimize-autoloader
+                    cp .env.example .env
+                    php artisan key:generate
+                '''
             }
         }
 
         stage('Construire image Docker') {
             steps {
-                sh 'docker build -t moussasy23/librairie:latest .'
+                sh 'docker build -t MoussaSY23/librairie:latest .'
             }
         }
     }
