@@ -3,6 +3,8 @@ pipeline {
         dockerfile {
             filename 'Dockerfile'
             dir '.'
+            // Ajouter volume pour Docker Socket
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
 
@@ -45,7 +47,12 @@ pipeline {
 
         stage('Construire image Docker') {
             steps {
-                sh 'docker build -t MoussaSY23/librairie:latest .'
+                // Ajout du chemin vers Docker pour éviter l'erreur "docker: not found"
+                sh '''
+                    export PATH=$PATH:/usr/bin
+                    docker --version
+                    docker build -t MoussaSY23/librairie:latest .
+                '''
             }
         }
     }
